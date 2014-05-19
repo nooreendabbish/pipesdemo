@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>|+|+|+|+|</title>
+<style>
+#pipes {
+  margin: auto;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+}  
+</style>
+</head>
+<body>
+<svg height="100", width="900", id="pipes"></svg>  
+<script> 
+ function Svgshape(svgtype, svgdict) {
+ 	this.svgtype = svgtype;
+ 	this.svgdict = svgdict;
+ }
+
+ Svgshape.prototype.svgtype = "";
+ Svgshape.prototype.svgtype = {};
+
+
+Svgshape.prototype.makeshape = function() {
+		var shape = 
+		document.createElementNS("http://www.w3.org/2000/svg", this.svgtype);
+	    for (key in this.svgdict) {
+	    	shape.setAttribute(key, this.svgdict[key]);
+	    	console.log(this.svgdict[key])
+	    }
+	    document.getElementById("pipes").appendChild(shape);
+	};
+
+var count = 5;
+var width = 20;
+var spacing = 10;
+var n = 70;
+
+var pathdata = [];
+var color = "red";
+
+var makeArray = function( ){
+ var randomArray = [];
+ for(var i = 0; i < 3; i++) {
+   var randomNum = Math.floor(Math.random()*101);
+   randomArray.push(randomNum);
+ }
+ randomArray.sort(function(a,b){return a - b});
+ return randomArray;
+};
+
+
+for (var i = 0; i<n; i++) {
+  var arr = makeArray();
+  var testRectangle = new Svgshape("rect", {"x":((width+spacing)*i), 
+                                            "y":0, 
+                                            "width":width,
+                                            "height": arr[0],
+                                             "id":("bar"+i)});
+  testRectangle.makeshape();
+  var bottomRectangle = new Svgshape("rect", {"x":((width+spacing)*i), 
+                                            "y":arr[2], 
+                                            "width":width,
+                                            "height": (100-arr[2]),
+                                             "id":("bar"+(i+n))});
+  bottomRectangle.makeshape();
+  pathdata[i] = arr[1];
+  if (i > 0) {
+  	var xpos  = (width/2)+(width+spacing)*(i-1);
+  	var xpos2 = (width/2)+(width+spacing)*(i);
+  	var testpath = new Svgshape("path", {"d": "M " + xpos +" "+ pathdata[i-1] 
+  		                                     + " L " + xpos2 + " " + pathdata[i],
+  		                                 "stroke":color,
+                                         "fill":"none",
+                                         "id": "fpath"+(i-1)});
+    testpath.makeshape();
+  }
+}
+
+
+
+Svgshape.prototype.remakeshape = function() {
+		var shape = document.getElementById(this.svgdict["id"]);
+	    for (key in this.svgdict) {
+	    	shape.setAttribute(key, this.svgdict[key]);
+	    	console.log(this.svgdict[key]);
+	    }
+	   // document.getElementById("pipes").appendChild(shape);
+	};
+
+var i;
+var rewrite = function(i) {
+    var arr = makeArray();
+    var testRectangle = new Svgshape("rect", {"x":((width+spacing)*i), 
+                                              "y":0, 
+                                              "width":width,
+                                              "height": arr[0],
+                                              "id":("bar"+i)});
+    testRectangle.remakeshape();
+var bottomRectangle = new Svgshape("rect", {"x":((width+spacing)*i), 
+                                            "y":arr[2], 
+                                            "width":width,
+                                            "height": (100-arr[2]),
+                                             "id":("bar"+(i+n))});
+  bottomRectangle.remakeshape();
+  pathdata[i] = arr[1];
+  if (i < (n-1)) { 
+  	makepath(i,i+1);
+} if (i > 0) {
+    makepath(i-1,i);
+} 
+};
+
+ 
+
+ var makepath = function(a,b){
+ 	var xpos  = (width/2)+(width+spacing)*(a);
+  	var xpos2 = (width/2)+(width+spacing)*(b);
+  	var testpath = new Svgshape("path", {"d": "M " + xpos +" "+ pathdata[a] 
+  		                                     + " L " + xpos2 + " " + pathdata[b],
+  		                                 "stroke":color,
+                                         "fill":"none",
+                                         "id": "fpath"+a});
+    testpath.remakeshape();
+};
+
+setInterval(function (){
+	  if (i < n){
+	  rewrite(i);
+	  console.log(i);
+	  i++;
+	}
+	 else { i = 0;
+	}
+}, 100)
+
+  </script>
+</body>
+</html>
